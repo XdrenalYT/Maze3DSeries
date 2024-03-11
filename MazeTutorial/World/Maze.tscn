@@ -1,0 +1,69 @@
+[gd_scene load_steps=11 format=3 uid="uid://c8akpe0kbnwny"]
+
+[ext_resource type="PackedScene" uid="uid://jqc2peevquax" path="res://Player/player.tscn" id="1_q7it5"]
+[ext_resource type="Script" path="res://World/Maze.gd" id="1_w0s0c"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6h1ci"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_5p3p8"]
+sky_material = SubResource("ProceduralSkyMaterial_6h1ci")
+
+[sub_resource type="Environment" id="Environment_sfs8r"]
+background_mode = 2
+sky = SubResource("Sky_5p3p8")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u6i1d"]
+albedo_color = Color(0, 0.517647, 0.0901961, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_psgyk"]
+material = SubResource("StandardMaterial3D_u6i1d")
+size = Vector2(300, 300)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_d27ql"]
+data = PackedVector3Array(150, 0, 150, -150, 0, 150, 150, 0, -150, -150, 0, 150, -150, 0, -150, 150, 0, -150)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_0ostc"]
+size = Vector2(300, 10)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_3qvfm"]
+data = PackedVector3Array(150, 0, 5, -150, 0, 5, 150, 0, -5, -150, 0, 5, -150, 0, -5, 150, 0, -5)
+
+[node name="Maze" type="Node3D"]
+script = ExtResource("1_w0s0c")
+max_walls = 20
+min_scale = 1
+max_scale = 10
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sfs8r")
+
+[node name="Player" parent="." instance=ExtResource("1_q7it5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.1065, 4.64515, 150.067)
+
+[node name="floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_psgyk")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="floor"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="floor/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_d27ql")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 155)
+mesh = SubResource("PlaneMesh_0ostc")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D"]
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_3qvfm")
+
+[node name="WallHolder" type="Node3D" parent="."]
